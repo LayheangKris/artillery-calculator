@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ប្រព័ន្ធគណនានិយាមការ និងតារាងបាញ់កាំភ្លើងធំ - Artillery Tactical Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruuy+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Kantumruuy Pro', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- Top Navigation Header -->
+    <header class="bg-slate-950 border-b border-slate-800 sticky top-0 z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-slate-950 font-bold text-xl shadow-md">
+                    🎯
+                </div>
+                <div>
+                    <h1 class="text-base sm:text-lg font-bold text-amber-500 tracking-wide">ប្រព័ន្ធគណនានិយាមការ និងតារាងបាញ់ (Artillery Calculator)</h1>
+                    <p class="text-xs text-slate-400">គណនាចម្ងាយ អង្សាទិស ទិសគោល មុំបត់ និងកម្រិតសាសគ្រាប់ | Development by <span class="text-amber-400 font-semibold">គ្រិស ឡាយហ៊ាង</span></p>
+                </div>
+            </div>
+            <div class="hidden sm:flex items-center space-x-3">
+                <div class="flex items-center space-x-2 bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-lg text-xs text-slate-300">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>ប្រព័ន្ធ ៦០០០ មីល (60-00 Mils)</span>
+                </div>
+                <div class="bg-amber-500/10 border border-amber-500/30 px-3 py-1.5 rounded-lg text-xs text-amber-400 font-medium">
+                    👨‍💻 Dev: គ្រិស ឡាយហ៊ាង
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-grow">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <!-- Left Panel: Inputs & Controls (5 Cols) -->
+            <div class="lg:col-span-5 space-y-5">
+               
+                <!-- Input Card -->
+                <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                        <h2 class="text-sm font-bold text-amber-400 flex items-center gap-2">
+                            <span>📍</span> បញ្ចូលទិន្នន័យនិយាមការ (Grid Coordinates)
+                        </h2>
+                        <button onclick="loadPreset()" class="text-xs bg-slate-800 hover:bg-slate-700 text-amber-300 px-2.5 py-1 rounded-md border border-slate-700 transition">
+                            គំរូសាកល្បង
+                        </button>
+                    </div>
+
+                    <!-- Firing Position (Gun Position) -->
+                    <div class="bg-slate-950/60 border border-slate-800/80 p-3.5 rounded-xl space-y-2">
+                        <label class="text-xs font-semibold text-emerald-400 flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span> ទីតាំងបាញ់ (Firing Position - OP/Gun)
+                        </label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <span class="text-[10px] text-slate-400 block mb-0.5">X1 (Easting):</span>
+                                <input type="number" id="x1" placeholder="ឧ. 48200" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500 transition">
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-400 block mb-0.5">Y1 (Northing):</span>
+                                <input type="number" id="y1" placeholder="ឧ. 15300" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500 transition">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Target Position -->
+                    <div class="bg-slate-950/60 border border-slate-800/80 p-3.5 rounded-xl space-y-2">
+                        <label class="text-xs font-semibold text-rose-400 flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-rose-500"></span> គោលដៅ (Target Position)
+                        </label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <span class="text-[10px] text-slate-400 block mb-0.5">X2 (Easting):</span>
+                                <input type="number" id="x2" placeholder="ឧ. 51500" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500 transition">
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-400 block mb-0.5">Y2 (Northing):</span>
+                                <input type="number" id="y2" placeholder="ឧ. 18900" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500 transition">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Base Azimuth Input -->
+                    <div class="bg-slate-950/60 border border-slate-800/80 p-3.5 rounded-xl space-y-2">
+                        <label class="text-xs font-semibold text-sky-400 flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-sky-500"></span> ទិសគោល (Base Azimuth - ៦០០០ មីល)
+                        </label>
+                        <div>
+                            <input type="number" id="base_azimuth" placeholder="ឧ. 4500 (សម្រាប់ទិស 45-00)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500 transition">
+                            <p class="text-[10px] text-slate-400 mt-1">* បញ្ចូលជាប្រព័ន្ធ ៦០០០ មីល (ឧទាហរណ៍៖ 4500 = 45-00)</p>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="grid grid-cols-2 gap-2 pt-1">
+                        <button onclick="resetForm()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-2.5 rounded-xl transition text-sm">
+                            សម្អាត (Clear)
+                        </button>
+                        <button onclick="calculateData()" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold py-2.5 rounded-xl shadow-lg transition active:scale-[0.98] text-sm">
+                            គណនាទិន្នន័យ (Calculate)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Weapon Specifications Reference Box -->
+                <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 text-xs space-y-2">
+                    <h3 class="font-bold text-slate-300 flex items-center justify-between">
+                        <span>⚙️ ព័ត៌មានបច្ចេកទេសសាស (Charge Specs)</span>
+                        <span class="text-[10px] text-amber-400 font-normal">W86 / 120mm Mortar</span>
+                    </h3>
+                    <div class="grid grid-cols-3 gap-1.5 text-center text-[11px] pt-1">
+                        <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
+                            <div class="text-slate-400">សាស ០</div>
+                            <div class="text-emerald-400 font-semibold">400m - 1200m</div>
+                        </div>
+                        <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
+                            <div class="text-slate-400">សាស ១</div>
+                            <div class="text-emerald-400 font-semibold">1200m - 2500m</div>
+                        </div>
+                        <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
+                            <div class="text-slate-400">សាស ២</div>
+                            <div class="text-emerald-400 font-semibold">2500m - 4000m</div>
+                        </div>
+                        <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
+                            <div class="text-slate-400">សាស ៣</div>
+                            <div class="text-emerald-400 font-semibold">4000m - 5500m</div>
+                        </div>
+                        <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
+                            <div class="text-slate-400">សាស ៤</div>
+                            <div class="text-emerald-400 font-semibold">5500m - 7200m</div>
+                        </div>
+                        <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
+                            <div class="text-slate-400">ប្រព័ន្ធមីល</div>
+                            <div class="text-amber-400 font-semibold">60-00 (6000)</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Panel: Output & Tactical Visualizer Map (7 Cols) -->
+            <div class="lg:col-span-7 space-y-5">
+
+                <!-- Results Grid Card -->
+                <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                        <h2 class="text-sm font-bold text-amber-400 flex items-center gap-2">
+                            <span>📊</span> លទ្ធផលគណនា (Calculation Output)
+                        </h2>
+                        <span id="calc_status" class="text-xs px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">រង់ចាំការបញ្ចូលទិន្នន័យ</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        <!-- Distance -->
+                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800/80 space-y-1">
+                            <span class="text-[11px] text-slate-400 block">ចម្ងាយបាញ់ (Distance)</span>
+                            <div id="res_dist" class="text-lg font-bold text-amber-400">-</div>
+                            <span id="res_dist_km" class="text-[10px] text-slate-500 block">-</span>
+                        </div>
+
+                        <!-- Charge Selection -->
+                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800/80 space-y-1">
+                            <span class="text-[11px] text-slate-400 block">កម្រិតសាសគ្រាប់ (Charge)</span>
+                            <div id="res_charge" class="text-base font-bold text-emerald-400">-</div>
+                            <span class="text-[10px] text-slate-500 block">កំណត់ស្វ័យប្រវត្តិ</span>
+                        </div>
+
+                        <!-- Azimuth 6000 Mil -->
+                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800/80 space-y-1">
+                            <span class="text-[11px] text-slate-400 block">អង្សាទិស (៦០០០ មីល)</span>
+                            <div id="res_mil6000" class="text-lg font-bold text-sky-400">-</div>
+                            <span id="res_mil6000_raw" class="text-[10px] text-slate-500 block">-</span>
+                        </div>
+
+                        <!-- Deviation from Base Azimuth -->
+                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800/80 space-y-1">
+                            <span class="text-[11px] text-slate-400 block">មុំធៀបនឹងទិសគោល (Deviation)</span>
+                            <div id="res_dev" class="text-base font-bold text-purple-400">-</div>
+                            <span class="text-[10px] text-slate-500 block">ទិសដៅតម្រង់</span>
+                        </div>
+
+                        <!-- Degrees -->
+                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800/80 space-y-1">
+                            <span class="text-[11px] text-slate-400 block">អង្សាទិស (Degrees °)</span>
+                            <div id="res_deg" class="text-base font-bold text-slate-200">-</div>
+                            <span class="text-[10px] text-slate-500 block">360° Grid North</span>
+                        </div>
+
+                        <!-- Azimuth 6400 Mil -->
+                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800/80 space-y-1">
+                            <span class="text-[11px] text-slate-400 block">អង្សាទិស (៦៤០០ មីល)</span>
+                            <div id="res_mil6400" class="text-base font-bold text-slate-200">-</div>
+                            <span class="text-[10px] text-slate-500 block">NATO Standard</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tactical Grid Visualizer Map -->
+                <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-sm font-bold text-amber-400 flex items-center gap-2">
+                            <span>🗺️</span> ផ្ទាំងទស្សនីយភាពបាញ់ (Tactical Map Display)
+                        </h3>
+                        <div class="flex items-center space-x-3 text-[11px]">
+                            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span> ទីតាំងបាញ់</span>
+                            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block"></span> គោលដៅ</span>
+                            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-sky-400 inline-block"></span> ទិសគោល</span>
+                        </div>
+                    </div>
+
+                    <!-- Canvas Box -->
+                    <div class="w-full bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative flex items-center justify-center p-2">
+                        <canvas id="tacticalCanvas" class="w-full h-64 sm:h-72 bg-slate-950 rounded-lg cursor-crosshair"></canvas>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- History Log Table Section -->
+        <div class="mt-6 bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h2 class="text-sm font-bold text-amber-400 flex items-center gap-2">
+                    <span>📜</span> កំណត់ត្រាការគណនា (Calculation History)
+                </h2>
+                <button onclick="clearHistory()" class="text-xs text-rose-400 hover:text-rose-300 transition">
+                    លុបប្រវត្តិ (Clear History)
+                </button>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-slate-300">
+                    <thead class="bg-slate-950 text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-800">
+                        <tr>
+                            <th class="p-2.5">#</th>
+                            <th class="p-2.5">ទីតាំងបាញ់ (X1, Y1)</th>
+                            <th class="p-2.5">គោលដៅ (X2, Y2)</th>
+                            <th class="p-2.5">ចម្ងាយ (m)</th>
+                            <th class="p-2.5">អង្សាទិស (6000 mil)</th>
+                            <th class="p-2.5">មុំបត់ធៀបទិសគោល</th>
+                            <th class="p-2.5">សាសគ្រាប់</th>
+                            <th class="p-2.5 text-right">ម៉ោង</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history_body" class="divide-y divide-slate-800/60">
+                        <tr>
+                            <td colspan="8" class="p-4 text-center text-slate-500">មិនទាន់មានទិន្នន័យគណនានៅឡើយទេ</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 border-t border-slate-800 py-4 text-center text-xs text-slate-500">
+        <p>© 2026 Artillery Tactical Calculation Tool | Development by <span class="text-amber-400 font-semibold">គ្រិស ឡាយហ៊ាង</span></p>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        let historyLogs = [];
+        let canvas = document.getElementById('tacticalCanvas');
+        let ctx = canvas.getContext('2d');
+
+        // Resize Canvas dynamically
+        function setupCanvas() {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * window.devicePixelRatio || rect.width;
+            canvas.height = rect.height * window.devicePixelRatio || rect.height;
+            drawPlaceholderGrid();
+        }
+
+        window.addEventListener('resize', setupCanvas);
+        setTimeout(setupCanvas, 100);
+
+        function drawPlaceholderGrid() {
+            const w = canvas.width;
+            const h = canvas.height;
+            ctx.clearRect(0, 0, w, h);
+
+            // Draw Background Grid Lines
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 1;
+
+            const step = 30;
+            for (let x = 0; x < w; x += step) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, h);
+                ctx.stroke();
+            }
+            for (let y = 0; y < h; y += step) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(w, y);
+                ctx.stroke();
+            }
+
+            // Compass Rose Overlay in Center
+            ctx.save();
+            ctx.strokeStyle = '#334155';
+            ctx.fillStyle = '#475569';
+            ctx.font = '10px Kantumruuy Pro';
+            ctx.textAlign = 'center';
+            ctx.fillText('N (00-00)', w / 2, 20);
+            ctx.fillText('S (30-00)', w / 2, h - 10);
+            ctx.fillText('E (15-00)', w - 30, h / 2);
+            ctx.fillText('W (45-00)', 30, h / 2);
+            ctx.restore();
+        }
+
+        function loadPreset() {
+            document.getElementById('x1').value = 48200;
+            document.getElementById('y1').value = 15300;
+            document.getElementById('x2').value = 51500;
+            document.getElementById('y2').value = 18900;
+            document.getElementById('base_azimuth').value = 0; // 00-00 North
+            calculateData();
+        }
+
+        function resetForm() {
+            document.getElementById('x1').value = '';
+            document.getElementById('y1').value = '';
+            document.getElementById('x2').value = '';
+            document.getElementById('y2').value = '';
+            document.getElementById('base_azimuth').value = '';
+
+            document.getElementById('res_dist').innerText = '-';
+            document.getElementById('res_dist_km').innerText = '-';
+            document.getElementById('res_charge').innerText = '-';
+            document.getElementById('res_mil6000').innerText = '-';
+            document.getElementById('res_mil6000_raw').innerText = '-';
+            document.getElementById('res_dev').innerText = '-';
+            document.getElementById('res_deg').innerText = '-';
+            document.getElementById('res_mil6400').innerText = '-';
+
+            document.getElementById('calc_status').innerText = 'រង់ចាំការបញ្ចូលទិន្នន័យ';
+            document.getElementById('calc_status').className = 'text-xs px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700';
+
+            drawPlaceholderGrid();
+        }
+
+        function calculateData() {
+            const x1 = parseFloat(document.getElementById('x1').value);
+            const y1 = parseFloat(document.getElementById('y1').value);
+            const x2 = parseFloat(document.getElementById('x2').value);
+            const y2 = parseFloat(document.getElementById('y2').value);
+            const baseAzimuth = parseFloat(document.getElementById('base_azimuth').value) || 0;
+
+            if (isNaN(x1) || isNaN(y1) || isNaN(x2) || isNaN(y2)) {
+                alert("សូមបញ្ចូលលេខនិយាមការ X និង Y ឲ្យបានគ្រប់ជ្រុងជ្រោយ!");
+                return;
+            }
+
+            const dx = x2 - x1;
+            const dy = y2 - y1;
+
+            // 1. Distance Calculation
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            // 2. Azimuth Calculation
+            let azimuthRad = Math.atan2(dx, dy);
+            if (azimuthRad < 0) {
+                azimuthRad += 2 * Math.PI;
+            }
+            const azimuthDeg = azimuthRad * (180 / Math.PI);
+
+            // Conversion to Mils
+            const mils6000 = azimuthDeg * (6000 / 360);
+            const mils6400 = azimuthDeg * (6400 / 360);
+
+            // XX-XX formatting for 6000 mils
+            const mainMil = Math.floor(mils6000 / 100).toString().padStart(2, '0');
+            const subMil = Math.round(mils6000 % 100).toString().padStart(2, '0');
+            const formattedMil6000 = `${mainMil}-${subMil}`;
+
+            // 3. Deviation from Base Azimuth
+            const baseDeg = baseAzimuth * (360 / 6000);
+            let devDeg = azimuthDeg - baseDeg;
+
+            if (devDeg > 180) devDeg -= 360;
+            if (devDeg < -180) devDeg += 360;
+
+            const devMils6000 = devDeg * (6000 / 360);
+            const direction = devMils6000 >= 0 ? "បត់ស្តាំ" : "បត់ឆ្វេង";
+            const devFormatted = `${direction} ${Math.abs(devMils6000).toFixed(1)} មីល`;
+
+            // 4. Charge Selection (120mm Mortar Table standard)
+            let charge = "";
+            let chargeClass = "text-emerald-400";
+            if (distance < 400) {
+                charge = "ជិតពេក (< 400m)";
+                chargeClass = "text-rose-400";
+            } else if (distance <= 1200) {
+                charge = "សាស ០ (Charge 0)";
+            } else if (distance <= 2500) {
+                charge = "សាស ១ (Charge 1)";
+            } else if (distance <= 4000) {
+                charge = "សាស ២ (Charge 2)";
+            } else if (distance <= 5500) {
+                charge = "សាស ៣ (Charge 3)";
+            } else if (distance <= 7200) {
+                charge = "សាស ៤ (Charge 4)";
+            } else {
+                charge = "ឆ្ងាយពេក (> 7200m)";
+                chargeClass = "text-rose-400";
+            }
+
+            // Update UI Elements
+            document.getElementById('res_dist').innerText = `${distance.toFixed(1)} ម៉ែត្រ`;
+            document.getElementById('res_dist_km').innerText = `(${ (distance / 1000).toFixed(2) } គីឡូម៉ែត្រ)`;
+           
+            const chargeElem = document.getElementById('res_charge');
+            chargeElem.innerText = charge;
+            chargeElem.className = `text-base font-bold ${chargeClass}`;
+
+            document.getElementById('res_mil6000').innerText = formattedMil6000;
+            document.getElementById('res_mil6000_raw').innerText = `(${mils6000.toFixed(1)} មីល)`;
+
+            document.getElementById('res_dev').innerText = devFormatted;
+            document.getElementById('res_deg').innerText = `${azimuthDeg.toFixed(2)}°`;
+            document.getElementById('res_mil6400').innerText = `${mils6400.toFixed(1)} មីល`;
+
+            document.getElementById('calc_status').innerText = 'គណនារួចរាល់';
+            document.getElementById('calc_status').className = 'text-xs px-2.5 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800';
+
+            // Render Map Visualization
+            renderMap(x1, y1, x2, y2, baseAzimuth, azimuthRad);
+
+            // Add to History
+            addHistoryLog(x1, y1, x2, y2, distance, formattedMil6000, devFormatted, charge);
+        }
+
+        function renderMap(x1, y1, x2, y2, baseAzimuthMil, azimuthRad) {
+            drawPlaceholderGrid();
+
+            const w = canvas.width;
+            const h = canvas.height;
+            const margin = 50;
+
+            // Calculate bounding box and scale
+            const minX = Math.min(x1, x2);
+            const maxX = Math.max(x1, x2);
+            const minY = Math.min(y1, y2);
+            const maxY = Math.max(y1, y2);
+
+            let spanX = Math.abs(maxX - minX) || 1000;
+            let spanY = Math.abs(maxY - minY) || 1000;
+
+            const scaleX = (w - margin * 2) / spanX;
+            const scaleY = (h - margin * 2) / spanY;
+            const scale = Math.min(scaleX, scaleY);
+
+            // Screen Mapping Functions
+            function toScreenX(x) {
+                return margin + (x - minX) * scale + (w - margin * 2 - spanX * scale) / 2;
+            }
+            function toScreenY(y) {
+                // Cartographic Y increases upwards, Canvas Y increases downwards
+                return h - (margin + (y - minY) * scale + (h - margin * 2 - spanY * scale) / 2);
+            }
+
+            const p1 = { x: toScreenX(x1), y: toScreenY(y1) };
+            const p2 = { x: toScreenX(x2), y: toScreenY(y2) };
+
+            // Draw Line of Fire
+            ctx.save();
+            ctx.strokeStyle = '#f59e0b'; // Amber Line
+            ctx.lineWidth = 2.5;
+            ctx.setLineDash([6, 4]);
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+            ctx.restore();
+
+            // Draw Base Azimuth Line from Gun Position
+            if (baseAzimuthMil > 0) {
+                const baseDeg = baseAzimuthMil * (360 / 6000);
+                const baseRad = baseDeg * (Math.PI / 180);
+                const baseLen = 120;
+                const bx = p1.x + baseLen * Math.sin(baseRad);
+                const by = p1.y - baseLen * Math.cos(baseRad);
+
+                ctx.save();
+                ctx.strokeStyle = '#38bdf8'; // Sky Blue Line
+                ctx.lineWidth = 1.5;
+                ctx.setLineDash([3, 3]);
+                ctx.beginPath();
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(bx, by);
+                ctx.stroke();
+
+                ctx.fillStyle = '#38bdf8';
+                ctx.font = '10px Kantumruuy Pro';
+                ctx.fillText('ទិសគោល', bx + 5, by);
+                ctx.restore();
+            }
+
+            // Draw Gun Position (Green Point)
+            ctx.save();
+            ctx.fillStyle = '#10b981';
+            ctx.beginPath();
+            ctx.arc(p1.x, p1.y, 7, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            ctx.fillStyle = '#34d399';
+            ctx.font = 'bold 11px Kantumruuy Pro';
+            ctx.fillText('ទីតាំងបាញ់', p1.x + 10, p1.y - 10);
+            ctx.restore();
+
+            // Draw Target Position (Red Crosshair)
+            ctx.save();
+            ctx.strokeStyle = '#f43f5e';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(p2.x, p2.y, 8, 0, Math.PI * 2);
+            ctx.moveTo(p2.x - 12, p2.y);
+            ctx.lineTo(p2.x + 12, p2.y);
+            ctx.moveTo(p2.x, p2.y - 12);
+            ctx.lineTo(p2.x, p2.y + 12);
+            ctx.stroke();
+
+            ctx.fillStyle = '#fb7185';
+            ctx.font = 'bold 11px Kantumruuy Pro';
+            ctx.fillText('គោលដៅ', p2.x + 12, p2.y + 15);
+            ctx.restore();
+        }
+
+        function addHistoryLog(x1, y1, x2, y2, dist, mil6000, dev, charge) {
+            const timeStr = new Date().toLocaleTimeString('km-KH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+           
+            historyLogs.unshift({
+                id: historyLogs.length + 1,
+                gun: `${x1}, ${y1}`,
+                target: `${x2}, ${y2}`,
+                dist: `${dist.toFixed(1)}m`,
+                mil6000: mil6000,
+                dev: dev,
+                charge: charge,
+                time: timeStr
+            });
+
+            renderHistoryTable();
+        }
+
+        function renderHistoryTable() {
+            const tbody = document.getElementById('history_body');
+            if (historyLogs.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-slate-500">មិនទាន់មានទិន្នន័យគណនានៅឡើយទេ</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = historyLogs.map(item => `
+                <tr class="hover:bg-slate-800/50 transition">
+                    <td class="p-2.5 text-slate-400 font-mono">${item.id}</td>
+                    <td class="p-2.5 font-medium text-emerald-300">${item.gun}</td>
+                    <td class="p-2.5 font-medium text-rose-300">${item.target}</td>
+                    <td class="p-2.5 text-amber-400 font-bold">${item.dist}</td>
+                    <td class="p-2.5 text-sky-400 font-bold">${item.mil6000}</td>
+                    <td class="p-2.5 text-purple-300">${item.dev}</td>
+                    <td class="p-2.5 text-slate-200">${item.charge}</td>
+                    <td class="p-2.5 text-right text-slate-500 font-mono text-[10px]">${item.time}</td>
+                </tr>
+            `).join('');
+        }
+
+        function clearHistory() {
+            historyLogs = [];
+            renderHistoryTable();
+        }
+    </script>
+</body>
+</html>
+
